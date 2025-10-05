@@ -22,17 +22,22 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
-    'timezone' => 'Europe/London',
+    'timezone' => $env['timezone'] ?? 'Europe/London',
+    'language' => $env['language'] ?? 'en-US',
     'components' => [
         'queue' => [
             'class' => Queue::class,
             'db' => 'db',
             'tableName' => '{{%queue}}',
             'channel' => 'default',
-            'mutex' => MysqlMutex::class
+            'mutex' => MysqlMutex::class,
+            'ttr' => 300, // Time to reserve
+            'attempts' => 3,
         ],
         'cache' => [
-            'class' => FileCache::class
+            'class' => FileCache::class,
+            'cachePath' => RUNTIME_PATH . '/cache',
+            'defaultDuration' => 3600,
         ],
         'mailer' => [
             'class' => Mailer::class,
@@ -52,10 +57,25 @@ $config = [
             'charset' => 'utf8mb4',
             'dsn' => $env['db.dsn'],
             'username' => $env['db.username'],
-            'password' => $env['db.password']
-        ]
+            'password' => $env['db.password'],
+            'enableSchemaCache' => !YII_DEBUG,
+            'schemaCacheDuration' => 3600,
+            'schemaCache' => 'cache',
+            'enableQueryCache' => true,
+            'queryCacheDuration' => 3600,
+        ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'dateFormat' => 'php:Y-m-d',
+            'datetimeFormat' => 'php:Y-m-d H:i:s',
+            'timeFormat' => 'php:H:i:s',
+            'defaultTimeZone' => $env['timezone'] ?? 'Europe/London',
+        ],
     ],
-    'params' => $env['params'],
+    'params' => array_merge([
+        'apiVersion' => '1.0',
+        'allowedOrigins' => ['*'],
+    ], $env['params'] ?? []),
 ];
-// https://github.com/yiisoft/yii2-symfonymailer
+
 return $config;

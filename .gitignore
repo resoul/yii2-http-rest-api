@@ -1,2 +1,27 @@
+# Vendor
 vendor/
+
+# Environment
 app/etc/env.php
+
+# Runtime
+runtime/
+/runtime
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Composer
+composer.lock
+
+# Cache
+app/cache/
